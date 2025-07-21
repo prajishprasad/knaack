@@ -7,6 +7,8 @@ from langgraph.prebuilt import create_react_agent
 from langgraph_supervisor import create_supervisor
 from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from pinecone import Pinecone
+from langchain_pinecone import PineconeVectorStore
 load_dotenv()
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 
@@ -16,13 +18,16 @@ response_model = init_chat_model("google_genai:gemini-2.0-flash", temperature=0)
 def load_vector_database():
     """Load the vector database from the Peer Team Report."""
     print("Loading vector database...")
-    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    
-    vector_store = Chroma(
-        collection_name="naac_collection",
-        embedding_function=embeddings_model,
-        persist_directory="./chroma_langchain_db",  # Where to save data locally, remove if not necessary
+    pinecone_api_key = os.environ.get("PINECONE_API_KEY")
+
+    pc = Pinecone(
+            api_key=pinecone_api_key
     )
+    index_name = "naac-index"
+    # Initialize index client
+    index = pc.Index(name=index_name)
+    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    vector_store = PineconeVectorStore(index=index, embedding=embeddings_model)
     print("Vector database loaded.")
     return vector_store
 
@@ -135,11 +140,17 @@ def create_supervisor_agent(sql_agent, rag_agent):
     model=response_model,
     agents=[sql_agent, rag_agent],
     prompt=(
-        "You are a supervisor managing two agents:\n"
-        "- an sql agent. Assign tasks to this agent only if you feel that the question needs to query a database\n"
-        "- a RAG agent. Assign tasks to this agent only if you feel that the question cannot be answered using queries to a database\n"
-        "Assign work to one agent at a time, do not call agents in parallel.\n"
-        "Do not do any work yourself."
+        """You are a supervisor managing two agents:
+        (1) An SQL agent - Assign tasks to this agent only if you feel that the question needs to query a database 
+        - e.g. questions related to 
+        (a) the grade of an institution
+        (b) Specific criteria grades,
+        (c) Key indicator grades.
+        and a combination of these queries.
+
+        (2) a RAG agent - Assign tasks to this agent only if you feel that the question cannot be answered using queries to a database mentioned above.
+        Assign work to one agent at a time, do not call agents in parallel.
+        Do not do any work yourself."""
     ),
     add_handoff_back_messages=False,
 

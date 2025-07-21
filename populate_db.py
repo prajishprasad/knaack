@@ -5,9 +5,9 @@ import os
 import sqlite3
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyPDFLoader
-
+from pinecone import Pinecone
+from langchain_pinecone import PineconeVectorStore
 
 def create_db(conn):
     """Create a database to store the NAAC accreditation data using sqlite3"""
@@ -312,16 +312,17 @@ def create_vector_database(pages,institution_name):
     for doc in docs:
         # Add institution name to metadata
         doc.metadata["college_name"] = institution_name
-
-    # Create embeddings
-    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     
-    vector_store = Chroma(
-        collection_name="naac_collection",
-        embedding_function=embeddings_model,
-        persist_directory="./chroma_langchain_db",  # Where to save data locally, remove if not necessary
-    )
+    pinecone_api_key = os.environ.get("PINECONE_API_KEY")
 
+    pc = Pinecone(
+            api_key=pinecone_api_key
+    )
+    index_name = "naac-index"
+    # Initialize index client
+    index = pc.Index(name=index_name)
+    embeddings_model = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    vector_store = PineconeVectorStore(index=index, embedding=embeddings_model)
     vector_store.add_documents(documents=docs)
     print("Vector database persisted for docs of institution:", institution_name)
     return vector_store
@@ -335,4 +336,8 @@ if __name__ == "__main__":
     # extract_grades_from_pdf_folder(GRADE_SHEET_FOLDER,conn)
     #conn.close()
 
-    # load_peer_team_reports_into_vector_db()
+    load_peer_team_reports_into_vector_db()
+
+
+
+
