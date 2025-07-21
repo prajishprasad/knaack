@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import os
+import json
 MAIN_URL = "https://assessmentonline.naac.gov.in/public/index.php/hei_dashboard"
 GRADE_SHEET_FOLDER = "Grade_Sheet_Report"
 IIQA_FOLDER = "IIQA_Report"
@@ -147,7 +148,6 @@ def download_reports_for_institution(hei_assessment_id, aishe_id):
             
             report_filename = str(aishe_id) + "_"+  report_category+ ".pdf"
             #Navigate to the appropriate folder
-            import os
             if not os.path.exists(report_folder):
                 os.makedirs(report_folder)
             report_filename = os.path.join(report_folder, report_filename)
@@ -180,7 +180,6 @@ def check_report_already_exists(aishe_id):
 def download_naac_reports(naac_data_file):
     """Download the NAAC Peer Team Report and Grade Sheet from the json file"""
     #Read the JSON file
-    import json
     with open(naac_data_file, 'r', encoding='utf-8') as file:
         data = json.load(file)
     for entry in data['data']:

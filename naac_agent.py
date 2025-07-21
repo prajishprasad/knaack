@@ -1,6 +1,5 @@
 import os
 from langchain.chat_models import init_chat_model
-from langchain_chroma import Chroma
 from langchain_community.utilities import SQLDatabase
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langgraph.prebuilt import create_react_agent
@@ -9,6 +8,10 @@ from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from pinecone import Pinecone
 from langchain_pinecone import PineconeVectorStore
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain.retrievers.self_query.base import SelfQueryRetriever
+from langchain.chains.query_constructor.base import AttributeInfo
+from langchain.tools.retriever import create_retriever_tool
 load_dotenv()
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 
@@ -33,10 +36,6 @@ def load_vector_database():
 
 def create_retriever(vector_store):
     """Query the vector database with a question."""
-    from langchain_google_genai import ChatGoogleGenerativeAI
-    import os
-    from langchain.retrievers.self_query.base import SelfQueryRetriever
-    from langchain.chains.query_constructor.base import AttributeInfo
 
     metadata_field_info = [
     AttributeInfo(
@@ -62,7 +61,6 @@ def create_retriever(vector_store):
         metadata_field_info=metadata_field_info,
         enable_limit=True,
     )
-    from langchain.tools.retriever import create_retriever_tool
     retriever_tool = create_retriever_tool(
         retriever,
         "retrieve_naac_information_from_vector_db",

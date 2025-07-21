@@ -3,6 +3,7 @@ import pdfplumber
 from naac_website_scraper import GRADE_SHEET_FOLDER, PEER_TEAM_REPORT_FOLDER
 import os
 import sqlite3
+import json
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -57,7 +58,7 @@ def insert_institution_details(entry,conn):
 
 # Example usage: insert all entries from your JSON file
 def insert_all_from_json(naac_data_file,conn):
-    import json
+    
     with open(naac_data_file, 'r', encoding='utf-8') as file:
         data = json.load(file)
     for entry in data['data']:
