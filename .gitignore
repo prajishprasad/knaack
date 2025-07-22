@@ -40,3 +40,4 @@ venv
 *.sw?
 __pycache__
 chroma_langchain_db
+.streamlit

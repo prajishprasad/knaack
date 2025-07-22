@@ -9,7 +9,10 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from pinecone import Pinecone
 from langchain_pinecone import PineconeVectorStore
+import streamlit as st
 
+st.write("GOOGLE_API_KEY", st.secrets["GOOGLE_API_KEY"])
+st.write("PINECONE_API_KEY", st.secrets["PINECONE_API_KEY"])
 def create_db(conn):
     """Create a database to store the NAAC accreditation data using sqlite3"""
     cursor = conn.cursor()

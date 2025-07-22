@@ -12,7 +12,11 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.retrievers.self_query.base import SelfQueryRetriever
 from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.tools.retriever import create_retriever_tool
+import streamlit as st
 load_dotenv()
+st.write("GOOGLE_API_KEY", st.secrets["GOOGLE_API_KEY"])
+st.write("PINECONE_API_KEY", st.secrets["PINECONE_API_KEY"])
+
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 
 
