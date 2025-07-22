@@ -14,18 +14,16 @@ from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.tools.retriever import create_retriever_tool
 import streamlit as st
 load_dotenv()
-st.write("GOOGLE_API_KEY", st.secrets["GOOGLE_API_KEY"])
-st.write("PINECONE_API_KEY", st.secrets["PINECONE_API_KEY"])
+# st.write("GOOGLE_API_KEY", st.secrets["GOOGLE_API_KEY"])
+# st.write("PINECONE_API_KEY", st.secrets["PINECONE_API_KEY"])
 
-os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
-
-
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 response_model = init_chat_model("google_genai:gemini-2.0-flash", temperature=0)
 
 def load_vector_database():
     """Load the vector database from the Peer Team Report."""
     print("Loading vector database...")
-    pinecone_api_key = os.environ.get("PINECONE_API_KEY")
+    pinecone_api_key = st.secrets["PINECONE_API_KEY"]
 
     pc = Pinecone(
             api_key=pinecone_api_key

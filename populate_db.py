@@ -317,7 +317,7 @@ def create_vector_database(pages,institution_name):
         # Add institution name to metadata
         doc.metadata["college_name"] = institution_name
     
-    pinecone_api_key = os.environ.get("PINECONE_API_KEY")
+    pinecone_api_key = st.secrets["PINECONE_API_KEY"]
 
     pc = Pinecone(
             api_key=pinecone_api_key
