@@ -1,3 +1,10 @@
+import asyncio
+try:
+    asyncio.get_event_loop()
+except RuntimeError:
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    
 import streamlit as st
 st.set_page_config(layout="wide")
 from naac_agent import create_rag_agent, create_sql_agent, create_supervisor_agent  # Import your agent
