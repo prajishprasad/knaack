@@ -20,7 +20,7 @@ st.title("KNAACK: Know about NAAC Accredited Institutes and Universities")
 
 question = ""
 with st.form("my_form"):
-    question = st.text_input("Enter your question related to NAAC accreditation or NAAC accreditated universities:")
+    question = st.text_input("Enter your question related to NAAC accreditation or NAAC accredited universities:")
     submitted = st.form_submit_button("Submit")
     st.write(":grey[Example 1: What are some of the green campus initiatives at FLAME UNIVERSITY?]")
     st.write(":grey[Example 2: What does the FLAME Centre for Entrepreneurship do?]")
